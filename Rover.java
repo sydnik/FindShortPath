@@ -2,11 +2,12 @@ public class Rover {
 
     private static int[][] staticMap = null;
     private static int maxStep = 0;
-    private static int[][] allAddress;
+
+
+
     public static void calculateRoverPath(int[][] map) {
         staticMap = map;
         maxStep = (map[0].length*map.length) - 1;
-        allAddress = new int[maxStep+1][2];
         int[] first;
         int[] second;
         first = reflectionFindPath(map[0][1],1, new int[]{0,1},new int[]{0,0});
@@ -35,10 +36,10 @@ public class Rover {
             return new int[]{Integer.MAX_VALUE};
         }
         if(address[0]==staticMap.length-1&&address[1]==staticMap[0].length-1){
-            System.out.println(step+" Шаг");
+
             int [] returnInt = new int[2+((step+3)*2)];
             returnInt[1] = step;
-            returnInt [0] = Math.abs(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]])+step;
+            returnInt [0] = moduleNumber(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]])+step;
             returnInt[(1+step)*2+1]=address[1];
             returnInt[(1+step)*2]=address[0];
             return returnInt;
@@ -56,17 +57,17 @@ public class Rover {
             check++;
         }
 
-        else if(address[0]!=startAddress[0]||address[1]-1!=startAddress[1]){
+        if(address[0]!=startAddress[0]||address[1]-1!=startAddress[1]){
             newAddress[check][0] = address[0];
             newAddress[check][1] = address[1]-1;
             check++;
         }
-        else if(address[0]+1!=startAddress[0]||address[1]+1!=startAddress[1]){
+        if(address[0]!=startAddress[0]||address[1]+1!=startAddress[1]){
             newAddress[check][0] = address[0];
             newAddress[check][1] = address[1]+1;
             check++;
         }
-        else {
+        if (address[0]-1!=startAddress[0]||address[1]!=startAddress[1]){
             newAddress[check][0] = address[0] - 1;
             newAddress[check][1] = address[1];
         }
@@ -87,17 +88,17 @@ public class Rover {
         if(first.length!=1){
             first[2+(step)*2+1]=address[1];
             first[2+(step)*2]=address[0];
-            first[0] = first[0] + Math.abs(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]]);
+            first[0] = first[0] + moduleNumber(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]]);
         }
         if(second.length!=1){
             second[2+(step)*2+1]=address[1];
             second[2+(step)*2]=address[0];
-            second[0] = second[0] + Math.abs(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]]);
+            second[0] = second[0] + moduleNumber(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]]);
         }
         if(third.length!=1){
             third[2+(step)*2+1]=address[1];
             third[2+(step)*2]=address[0];
-            third[0] = third[0] + Math.abs(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]]);
+            third[0] = third[0] + moduleNumber(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]]);
         }
 
         if(first[0]==second[0]&&second[0]==third[0]){
@@ -120,7 +121,10 @@ public class Rover {
         }
         return third;
     }
-
-
-
+    private static int moduleNumber (int i){
+        if(i<0){
+            return -i;
+        }
+        return i;
+    }
 }
