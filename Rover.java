@@ -10,33 +10,30 @@ public class Rover {
         maxStep = (map[0].length*map.length) - 1;
         int[] first;
         int[] second;
-        first = reflectionFindPath(map[0][1],1, new int[]{0,1},new int[]{0,0});
-        second = reflectionFindPath(map[1][0],1, new int[]{1,0},new int[]{0,0});
-        for (int i=0;i<first.length;i++){
-            if(i%2==0){
-                System.out.print(first[i]);
-            }
-            else if(i%2==1){
-                System.out.println(first[i]);
-            }
-        }
+        int[][] checkList = new int[maxStep-1][2];
+        first = reflectionFindPath(map[0][1],1, new int[]{0,1},new int[]{0,0},checkList);
+        second = reflectionFindPath(map[1][0],1, new int[]{1,0},new int[]{0,0},checkList);
+
 
 
 
         if(first[0]<second[0]){
 
         }
+        else {
+
+        }
     }
 
-    //на данный момент возвращает сколько топлива потрачено
-    //главное не запутаться)  и чтобы хватило оперативки
+
+
     //первое число количество топлива, второй количество шагов, и далее список адресов
-    private static int[] reflectionFindPath(int height,int step,int [] address,int [] startAddress){
+    private static int[] reflectionFindPath(int height,int step,int [] address,int [] startAddress,int[][] checklist){
         if(step>maxStep){
             return new int[]{Integer.MAX_VALUE};
+
         }
         if(address[0]==staticMap.length-1&&address[1]==staticMap[0].length-1){
-
             int [] returnInt = new int[2+((step+3)*2)];
             returnInt[1] = step;
             returnInt [0] = moduleNumber(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]])+step;
@@ -44,12 +41,22 @@ public class Rover {
             returnInt[(1+step)*2]=address[0];
             return returnInt;
         }
+        for(int i=0;i<maxStep-1;i++){
+            if(address[0]==checklist[i][0]&&address[1]==checklist[i][1]){
+                return new int[]{Integer.MAX_VALUE};
+            }
+        }
+
 
         int stepNew = step;
         int[] first = new int[1];
         int[] second = new int[1];
         int[] third = new int[1];
         int newAddress[][] = new int[3][2];
+        int[][] newCheckList = copyList(checklist);
+
+        newCheckList[step][0] = address[0];
+        newCheckList[step][1] = address[1];
         int check = 0;
         if(address[0]+1!=startAddress[0]||address[1]!=startAddress[1]){
             newAddress[check][0] = address[0]+1;
@@ -73,15 +80,15 @@ public class Rover {
         }
 
         try {
-            first = reflectionFindPath(staticMap[startAddress[0]][startAddress[1]],stepNew+1, new int[]{newAddress[0][0],newAddress [0][1]},address);
+            first = reflectionFindPath(staticMap[startAddress[0]][startAddress[1]],stepNew+1, new int[]{newAddress[0][0],newAddress [0][1]},address,newCheckList);
         }catch (Exception e){ first[0] = Integer.MAX_VALUE;
         }
         try {
-            second = reflectionFindPath(staticMap[startAddress[0]][startAddress[1]],stepNew+1, new int[]{newAddress[1][0],newAddress [1][1]},address);
+            second = reflectionFindPath(staticMap[startAddress[0]][startAddress[1]],stepNew+1, new int[]{newAddress[1][0],newAddress [1][1]},address,newCheckList);
         }catch (Exception e){second[0] = Integer.MAX_VALUE;
         }
         try {
-            third = reflectionFindPath(staticMap[startAddress[0]][startAddress[1]],stepNew+1, new int[]{newAddress[2][0],newAddress [2][1]},address);
+            third = reflectionFindPath(staticMap[startAddress[0]][startAddress[1]],stepNew+1, new int[]{newAddress[2][0],newAddress [2][1]},address,newCheckList);
         }catch (Exception e){third[0] = Integer.MAX_VALUE;
         }
 
@@ -126,5 +133,13 @@ public class Rover {
             return -i;
         }
         return i;
+    }
+    private static int[][] copyList (int[][] list){
+        int[][] newChecklist = new int[maxStep-1][2];
+        for(int i =0;i<maxStep-1;i++){
+            newChecklist[i][0] = list[i][0];
+            newChecklist[i][1] = list[i][1];
+        }
+        return newChecklist;
     }
 }
