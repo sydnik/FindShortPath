@@ -1,3 +1,6 @@
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Rover {
 
     private static int[][] staticMap = null;
@@ -11,17 +14,31 @@ public class Rover {
         int[] first;
         int[] second;
         int[][] checkList = new int[maxStep-1][2];
+        StringBuilder result = new StringBuilder("");
         first = reflectionFindPath(map[0][1],1, new int[]{0,1},new int[]{0,0},checkList);
         second = reflectionFindPath(map[1][0],1, new int[]{1,0},new int[]{0,0},checkList);
 
-
-
-
         if(first[0]<second[0]){
-
+            result.append("[").append(first[2]).append("][").append(first[3]).append("]");
+            for (int i = 4;i<first.length;i = i+2){
+                result.append("->[").append(first[i]).append("][").append(first[i+1]).append("]");
+            }
+            result.append("\nsteps: ").append(first[1])
+                    .append("\nfuel: ").append(first[0]);
         }
         else {
+            result.append("[").append(second[2]).append("][").append(second[3]).append("]");
+            for (int i = 4;i<second.length;i = i+2){
+                result.append("->[").append(second[i]).append("][").append(second[i+1]).append("]");
+            }
+            result.append("\nsteps: ").append(second[1])
+                    .append("\nfuel: ").append(second[0]);
 
+        }
+        try(FileWriter writer = new FileWriter("path-plan.txt")) {
+            writer.write(String.valueOf(result));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -34,14 +51,14 @@ public class Rover {
 
         }
         if(address[0]==staticMap.length-1&&address[1]==staticMap[0].length-1){
-            int [] returnInt = new int[2+((step+3)*2)];
-            returnInt[1] = step;
-            returnInt [0] = moduleNumber(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]])+step;
-            returnInt[(1+step)*2+1]=address[1];
-            returnInt[(1+step)*2]=address[0];
-            return returnInt;
+            int [] result = new int[2+((step+1)*2)];
+            result[1] = step;
+            result [0] = moduleNumber(staticMap[startAddress[0]][startAddress[1]]-staticMap[address[0]][address[1]])+step;
+            result[(1+step)*2+1]=address[1];
+            result[(1+step)*2]=address[0];
+            return result;
         }
-        for(int i=0;i<maxStep-1;i++){
+        for(int i=0;i<step;i++){
             if(address[0]==checklist[i][0]&&address[1]==checklist[i][1]){
                 return new int[]{Integer.MAX_VALUE};
             }
@@ -142,4 +159,6 @@ public class Rover {
         }
         return newChecklist;
     }
+
+
 }
