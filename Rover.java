@@ -1,7 +1,4 @@
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
+
 
 public class Rover {
 
@@ -23,42 +20,29 @@ public class Rover {
     private static int[][] staticMap = null;
     private static int maxStep = 0;
     private static int[][][] matrixForSolution;
-    private static int[][][] matrixCopy;
-    private static int maxInt = Integer.MAX_VALUE/2;
+//    private static int[][][] matrixCopy;
+    private static int maxInt = 99;
 
 
 
-        public static void calculateRoverPath(int[][] map) {
+    public static void calculateRoverPath(int[][] map) {
             staticMap=map;
             createMatrix(map);
+            fillOneStepMatrix();
             fillMatrix();
 
 
 
 
 
-//            for (int k = 0; k < matrixForSolution.length; k++) {
-//                for (int i = 0; i < matrixForSolution.length; i++)
-//                    for (int j = 0; j < matrixForSolution.length; j++) {
-//                        matrixForSolution[i][j][0] = min(matrixForSolution[i][j][0], matrixForSolution[i][k][0] + matrixForSolution[k][j][0]);
-//                    }
-//            }
-            int numberOne,numberTwo;
-                for(int y = 0;y<matrixForSolution.length;y++){
-                    numberOne = matrixForSolution[0][y][0];
-                    numberTwo = matrixForSolution[0][y][1];
-                    for(int x =0;x<matrixForSolution.length;x++){
-//                        matrixForSolution[y][x][0] = matrixForSolution
-                    }
-                }
+
                 for(int i =0;i<matrixForSolution.length;i++){
-                for(int j =0;j<matrixForSolution.length;j++){
+                    for(int j =0;j<matrixForSolution.length;j++){
                     System.out.print(matrixForSolution[i][j][0]+" ");
                 }
                 System.out.println();
             }
         }
-
 
 
 
@@ -97,37 +81,50 @@ public class Rover {
         }
 
     }
-    private static void fillMatrix(){
-            int i=2;
-        for(int y = 0;y<staticMap.length;y++){
-            for(int x = 0;x<staticMap[0].length;x++){
-                try {
-                    matrixForSolution[i][i-1][0] = 1+moduleNumber(staticMap[y][x]-staticMap[y][x-1]);
-                    i++;
-                }catch (Exception e){
+    //Создаю таблицу и делаю из каждой ячейки 1 шаг. И заполняю данные.
+    private static void fillOneStepMatrix(){
+        for(int i =0; i<staticMap.length*staticMap[0].length;i++) {
 
-                }
-                try {
-                    matrixForSolution[0][i][0] = 1+moduleNumber(staticMap[y][x]-staticMap[y-1][x]);
-                    i++;
-                }catch (Exception e){
+                    try {
+                        matrixForSolution[1+i][1+i+1][0] = 1 + moduleNumber(staticMap[i/staticMap.length][i%staticMap[0].length] - staticMap[i/staticMap.length][i%staticMap[0].length+1]);
 
-                }
-                try {
-                    matrixForSolution[0][i][0] = 1+moduleNumber(staticMap[y][x]-staticMap[y+1][x]);
-                    i++;
-                }catch (Exception e){
+                    } catch (Exception e) { }
+                    try {
+                        matrixForSolution[1+i][i+1-staticMap[0].length][0] = 1 + moduleNumber(staticMap[i/staticMap.length][i%staticMap[0].length] - staticMap[i/staticMap.length-1][i%staticMap[0].length]);
 
-                }
-                try {
-                    matrixForSolution[0][i+1][0] = 1+moduleNumber(staticMap[y][x]-staticMap[y][x+1]);
-                    i++;
-                }catch (Exception e){
+                    } catch (Exception e) { }
+                    try {
+                        matrixForSolution[i+1][i+1+staticMap[0].length][0] = 1 + moduleNumber(staticMap[i/staticMap.length][i%staticMap[0].length] - staticMap[i/staticMap.length+1][i%staticMap[0].length]);
+                    } catch (Exception e) { }
+                    try {
+                        matrixForSolution[i+1+1][i+1][0] = 1 + moduleNumber(staticMap[i/staticMap.length][i%staticMap[0].length] - staticMap[i/staticMap.length][i%staticMap[0].length+1]);
 
-                }
-            }
+                    } catch (Exception e) { }
         }
+
     }
+    private static void fillMatrix(){
+
+
+        for(int i= 1;i<matrixForSolution.length;i++) {
+            for (int y = 1; y < matrixForSolution.length; y++) {
+                for (int x = 1; x < matrixForSolution.length; x++) {
+                        matrixForSolution[y][x][0] = min(matrixForSolution[y][x][0], matrixForSolution[y][i][0] + matrixForSolution[i][x][0]);
+
+                    }
+                }
+            for (int p = 0; p < matrixForSolution.length; p++) {
+                for (int q = 0; q < matrixForSolution.length; q++) {
+                    System.out.print(matrixForSolution[p][q][0] + " ");
+                }
+                System.out.println();
+            }
+            }
+
+
+        }
+
+
     private static int min (int first,int second){
             if(first>second){
                 return second;
